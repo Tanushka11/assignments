@@ -16,6 +16,27 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use(function(req,res,next){
+  // if only number of requests had to be counted for "user-id"
+  // numberOfRequestsForUser[req.headers["user-id"]]++;
+
+  // who is the user
+  const userID = req.headers["user-id"];
+  if(numberOfRequestsForUser[userID]){
+    numberOfRequestsForUser[userID] += 1;
+    if(numberOfRequestsForUser[userID] > 5){
+      res.status(404).json({
+        msg: "no entry"
+      })
+    }else{
+      next();
+    }
+  }else{
+    numberOfRequestsForUser[userID] = 1;
+    next();
+  }
+})
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
