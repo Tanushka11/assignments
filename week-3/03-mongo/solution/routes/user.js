@@ -11,7 +11,7 @@ router.post('/signup', (req, res) => {
     const password = req.body.password;
     User.create({
         username, 
-        password
+        password,
     })
     res.json({
         message: "User created successfully"
@@ -28,22 +28,19 @@ router.get('/courses', async (req, res) => {
      })
 });
 
-router.post('/courses/:courseId', userMiddleware, async(req, res) => {
+router.post('/courses/:courseId',  userMiddleware, async (req, res) => {
     // Implement course purchase logic
-    const courseId = req.params.courseId;
-    const username = req.headers.username;
-
-    await User.updateOne({
-        username: username
-    }, {
-        "$push": {
-            purchasedCourses: courseId
+    await updateOne({
+        username: req.username,
+    },
+    {  $push: {
+            purchasedCourses: req.params.courseId,
         }
-    })
-    res.json({
-        message: "Purchase complete!"
-    })
 });
+res.json({
+    msg:"purchased the course"
+})
+})
 
 router.get('/purchasedCourses', userMiddleware, async (req, res) => {
     // Implement fetching purchased courses logic
